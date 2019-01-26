@@ -21,14 +21,13 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 
-@ApplicationPath("/api/*")
 //The main api endpoint
-@Path("/getURL")
+@Path("getURL")
 public class OpenmtrApiMain {
 
     // The Java method will process HTTP GET requests
     @GET
-    @Path("/")
+    
     @Produces("application/json")
     public Response processFromURL(@QueryParam("url") String url) {
         //Initialize a Response Class
