@@ -22,7 +22,7 @@ import java.nio.file.StandardCopyOption;
 
 
 //The main api endpoint
-@Path("getURL")
+@Path("/getURL")
 public class OpenmtrApiMain {
 
     // The Java method will process HTTP GET requests
