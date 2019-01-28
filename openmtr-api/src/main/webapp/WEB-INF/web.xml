@@ -4,7 +4,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
-<!--
+<!-- OpenLiberty
 <servlet>
     <servlet-name>openmtr-api</servlet-name>
     <servlet-class>com.ibm.websphere.jaxrs.server.IBMRestServlet</servlet-class>
@@ -20,7 +20,7 @@
   </servlet-mapping>
 -->
 
-
+<!-- Jersey 1.x
   <servlet>
     <servlet-name>openmtr-api</servlet-name>
     <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
@@ -34,6 +34,21 @@
     <servlet-name>openmtr-api</servlet-name>
     <url-pattern>/api/*</url-pattern>
   </servlet-mapping>
+-->
 
+<!-- Jersey 2.x --> 
+<servlet>
+    <servlet-name>openmtr-api</servlet-name>
+    <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+    <init-param>
+      <param-name>javax.ws.rs.Application</param-name>
+      <param-value>com.openmtr_api</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>openmtr-api</servlet-name>
+    <url-pattern>/api/*</url-pattern>
+  </servlet-mapping>
   
 </web-app>
