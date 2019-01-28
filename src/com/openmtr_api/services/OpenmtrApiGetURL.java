@@ -1,27 +1,40 @@
 package com.openmtr_api.services;
 
 
+import javax.imageio.ImageIO;
+
 /*
 OpenMtr-API
 Authors James Willhoite, Jenny Franklin, Matt Thomas
 PSTCC Capstone 2019
+
+This class will get the URL from the user to download an image
  */
 
 //Import required
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.awt.image.WritableRaster;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import com.mattclinard.openmtr.*;
+
 
 
 //The main api endpoint
 @Path("/getURL")
-public class OpenmtrApiMain {
-
+public class OpenmtrApiGetURL {
+	
+	
     // The Java method will process HTTP GET requests
     @GET
     
@@ -61,7 +74,7 @@ public class OpenmtrApiMain {
      */
     public String downloadFromURL(String url) throws Exception {
         String DS = File.separator;
-        String dirPath = new File(".").getCanonicalPath() + DS + "apps" + DS + "expanded" + DS + "openmtr-api.war" + DS + "images";
+        String dirPath = "/images";
 
 
         //check to make sure the images folder exsists
@@ -82,9 +95,33 @@ public class OpenmtrApiMain {
         } catch (Exception ex) {
             throw new Exception(ex.getMessage());
         }
+        
+        //Test this file against Matt C's libaray
+        byte[] image;
+        try {
+        	image = this.extractBytes(FILE_NAME);
+        } catch(IOException ex) {
+        	throw new Exception(ex.getMessage());
+        }
+        
+        String meterRead = OpenMeter.getMeterRead(image);
+        
 
-        return FILE_NAME;
+        return meterRead;
 
+    }
+    
+    //Return a byte[] from the given image
+    //Thank you https://stackoverflow.com/questions/3211156/how-to-convert-image-to-byte-array-in-java
+    public byte[] extractBytes(String imageName) throws IOException {
+    	//Open the Image
+    	File imagePath = new File(imageName);
+    	BufferedImage bufferedImage = ImageIO.read(imagePath);
+    	
+    	WritableRaster raster = bufferedImage.getRaster();
+    	DataBufferByte data = (DataBufferByte) raster.getDataBuffer();
+    	
+    	return data.getData();
     }
 
 

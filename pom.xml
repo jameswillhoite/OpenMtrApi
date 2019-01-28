@@ -29,6 +29,8 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
     </plugins>
   </build>
   
+  
+  
   	<dependencies>
   	<!--  Jersey Server and Container -->
 		 <dependency>
@@ -42,5 +44,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 		  <artifactId>jersey-container-servlet</artifactId>
 		  <version>2.20</version>
 		 </dependency>
+		
 	</dependencies>
 </project>
