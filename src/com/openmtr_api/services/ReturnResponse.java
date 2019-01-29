@@ -1,6 +1,8 @@
 package com.openmtr_api.services;
 
 
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 
@@ -10,6 +12,7 @@ public class ReturnResponse {
     String error_msg;
     String data;
 
+    @Produces(MediaType.APPLICATION_JSON)
     /**
      * Will return a JSON response with the error message given
      * @param message The message to return

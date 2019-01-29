@@ -44,6 +44,31 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 		  <artifactId>jersey-container-servlet</artifactId>
 		  <version>2.20</version>
 		 </dependency>
+	<!--  Import Matt Clinard's OpenMeter 
+		**Note must run the following command
+		mvn install::install-file -Dfile=Library/openmeter.jar -DgroupId=com.mattclinard -DartifactId=openmeter -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
+	-->	 
+		 <dependency>
+			 <groupId>com.mattclinard</groupId>
+			 <artifactId>openmeter</artifactId>
+			 <version>1.0</version>
+		 </dependency>
+		 
+	 <!-- https://mvnrepository.com/artifact/org.json/json -->
+		<dependency>
+		    <groupId>org.json</groupId>
+		    <artifactId>json</artifactId>
+		    <version>20180813</version>
+		</dependency>
+
+	 
+		 
+		 <dependency>
+		    <groupId>javax</groupId>
+		    <artifactId>javaee-web-api</artifactId>
+		    <version>6.0</version>
+		    <scope>provided</scope>
+		  </dependency>
 		
 	</dependencies>
 </project>

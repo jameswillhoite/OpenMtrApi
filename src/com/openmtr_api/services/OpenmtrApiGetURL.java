@@ -13,7 +13,11 @@ This class will get the URL from the user to download an image
 
 //Import required
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import javax.servlet.ServletContext;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -34,11 +38,16 @@ import com.mattclinard.openmtr.*;
 @Path("/getURL")
 public class OpenmtrApiGetURL {
 	
+	@Context
+    UriInfo uriInfo;
+	@Context
+	ServletContext servletContext;
+	
 	
     // The Java method will process HTTP GET requests
     @GET
     
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response processFromURL(@QueryParam("url") String url) {
         //Initialize a Response Class
         ReturnResponse rr = new ReturnResponse();
@@ -72,16 +81,17 @@ public class OpenmtrApiGetURL {
      * @param url url to download file
      * @return String The file location
      */
+   
     public String downloadFromURL(String url) throws Exception {
         String DS = File.separator;
-        String dirPath = "/images";
+        String dirPath = servletContext.getRealPath("/upload");
 
 
         //check to make sure the images folder exsists
         File dir = new File(dirPath);
 
         if(!dir.exists())
-            throw new Exception("Image folder doesn't exsist. ");
+            throw new Exception("Image folder doesn't exsist. " );
 
         //Build the File Name
 
@@ -96,15 +106,30 @@ public class OpenmtrApiGetURL {
             throw new Exception(ex.getMessage());
         }
         
-        //Test this file against Matt C's libaray
+        
+        //Make sure the file was download
+        File imageFile = new File(FILE_NAME);
+        if(!imageFile.exists())
+        	throw new Exception("File was not download.");
+        
+        
+        //Test this file against Matt C's library
         byte[] image;
         try {
         	image = this.extractBytes(FILE_NAME);
         } catch(IOException ex) {
+        	imageFile.delete();
         	throw new Exception(ex.getMessage());
         }
         
-        String meterRead = OpenMeter.getMeterRead(image);
+        
+        String meterRead;
+        try {
+        	meterRead = OpenMeter.getMeterRead(image);
+        } catch (Exception ex) {
+        	imageFile.delete();
+        	throw new Exception(ex.getMessage());
+        }
         
 
         return meterRead;
