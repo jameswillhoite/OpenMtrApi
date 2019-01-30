@@ -32,6 +32,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.mattclinard.openmtr.*;
 
 
@@ -67,7 +70,13 @@ public class OpenmtrApiGetURL {
         }
 
 
-        //ToDo regex to validate a url
+        //Test and make sure the given url is a valid url
+        //Must start with http(s):// for a valid URL
+        Pattern urlReg = Pattern.compile("^((http[s]?|ftp):\\/\\/){1,1}\\/?([^:\\/\\s]+)((\\/\\w+)*\\/)([\\w\\-\\.]+[^#?\\s]+)(.*)?(#[\\w\\-]+)?$");
+        Matcher m = urlReg.matcher(url);
+        if(!m.find())
+        	return rr.error("The given url is invalid. Please provide a format of http(s)://domain.com/image.extension", 400);
+        
 
         String file = "";
         try {
