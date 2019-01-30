@@ -24,8 +24,10 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -42,6 +44,10 @@ public class OpenmtrApiGetURL {
     UriInfo uriInfo;
 	@Context
 	ServletContext servletContext;
+	
+	public OpenmtrApiGetURL() {
+		
+	}
 	
 	
     // The Java method will process HTTP GET requests
@@ -63,16 +69,16 @@ public class OpenmtrApiGetURL {
 
         //ToDo regex to validate a url
 
-        String file;
+        String file = "";
         try {
             file = this.downloadFromURL(url);
-        } catch (Exception ex) {
-            return rr.error(ex.getMessage(), 400);
+    	} catch (Exception ex) {
+           return rr.error("Download from URL: " + ex.getMessage(), 400);
         }
 
         rr.setData("The file was downloaded. " + file);
 
-        return Response.status(200).entity(rr).build();
+        return rr.success();
 
     }
 
@@ -94,41 +100,41 @@ public class OpenmtrApiGetURL {
             throw new Exception("Image folder doesn't exsist. " );
 
         //Build the File Name
+        String FILE_NAME = url.split("/")[url.split("/").length-1];
+        String FILE_PATH = dirPath + DS + FILE_NAME;
+        
 
-        String FILE_NAME = dirPath + DS + url.split("/")[url.split("/").length-1];
-
-
-
+        //Get the image from the URL
         try {
             InputStream in = new URL(url).openStream();
-            Files.copy(in, Paths.get(FILE_NAME), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(in, Paths.get(FILE_PATH), StandardCopyOption.REPLACE_EXISTING);
         } catch (Exception ex) {
-            throw new Exception(ex.getMessage());
+            throw new Exception("Download from url: " + ex.getMessage());
         }
         
         
         //Make sure the file was download
-        File imageFile = new File(FILE_NAME);
+        File imageFile = new File(FILE_PATH);
         if(!imageFile.exists())
         	throw new Exception("File was not download.");
-        
+                
         
         //Test this file against Matt C's library
-        byte[] image;
+        byte[] image = null;
         try {
-        	image = this.extractBytes(FILE_NAME);
+        	image = this.extractBytes(FILE_PATH);
         } catch(IOException ex) {
-        	imageFile.delete();
-        	throw new Exception(ex.getMessage());
+        	//imageFile.delete();
+        	throw new Exception("Extract Bytes: " + ex.getMessage());
         }
         
         
-        String meterRead;
+        String meterRead = "";
         try {
         	meterRead = OpenMeter.getMeterRead(image);
         } catch (Exception ex) {
-        	imageFile.delete();
-        	throw new Exception(ex.getMessage());
+        	//imageFile.delete();
+        	throw new Exception("OpenMeter Error: " + ex.getMessage());
         }
         
 
@@ -138,16 +144,30 @@ public class OpenmtrApiGetURL {
     
     //Return a byte[] from the given image
     //Thank you https://stackoverflow.com/questions/3211156/how-to-convert-image-to-byte-array-in-java
-    public byte[] extractBytes(String imageName) throws IOException {
-    	//Open the Image
-    	File imagePath = new File(imageName);
-    	BufferedImage bufferedImage = ImageIO.read(imagePath);
-    	
-    	WritableRaster raster = bufferedImage.getRaster();
-    	DataBufferByte data = (DataBufferByte) raster.getDataBuffer();
+    public byte[] extractBytes(String imagePath) throws Exception {
+    	//Get the image location
+    	//ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		//URL resource = classLoader.getResource(imageName);
+		//String imageLocation = resource.getPath();
+		
+		//Create the File variable
+    	File image = null;
+    	BufferedImage bufferedImage = null;
+    	WritableRaster raster = null;
+    	DataBufferByte data = null;
+    	try {
+	    	image = new File(imagePath);
+	    	bufferedImage = ImageIO.read(image);
+	    	
+	    	raster = bufferedImage.getRaster();
+	    	data = (DataBufferByte) raster.getDataBuffer();
+    	} catch (Exception ex) {
+    		throw new Exception(ex.getMessage());
+    	}
     	
     	return data.getData();
     }
-
+    
+   
 
 }

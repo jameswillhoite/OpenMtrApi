@@ -12,7 +12,13 @@ public class ReturnResponse {
     String error_msg;
     String data;
 
-    @Produces(MediaType.APPLICATION_JSON)
+
+    public ReturnResponse() {
+    	this.error_msg = "";
+    	this.data = null;
+    	this.error = false;
+    }
+
     /**
      * Will return a JSON response with the error message given
      * @param message The message to return
@@ -44,6 +50,17 @@ public class ReturnResponse {
 
     public String getData() {
         return this.data;
+    }
+    
+    public Response success() {
+    	return Response
+    			.status(200)
+    			.entity("{" +
+                "\"error\" : \"" + this.error + "\", " +
+                "\"error_msg\" : \"" + this.error_msg + "\", " +
+                "\"data\" : \"" + this.data + "\" " +
+                "}")
+    			.build();
     }
 
 }
